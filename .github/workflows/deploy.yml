@@ -84,11 +84,11 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
       - name: 'Get Deployer Secrets'
-          id: get-deployer-secret
-          uses: azure/get-keyvault-secrets@v1
-          with:
-            keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
-            secrets: 'bricks-demo-eastus2-deployer, sabricksed-access-key'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'bricks-demo-eastus2-deployer, sabricksed-access-key'
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v1
       - name: 'Terraform Init'
