@@ -70,7 +70,7 @@ jobs:
               az logout
               az cache purge
               az account clear
-  apply-workload:
+  apply:
     name: 'apply infrastructure'
     needs: plan
     runs-on: ubuntu-latest
