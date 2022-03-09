@@ -4,8 +4,8 @@ terraform {
     random  = "~> 2.2"
   }
 
-  # backend "azurerm" {
-  # }
+  backend "azurerm" {
+  }
 }
 
 provider "azurerm" {
