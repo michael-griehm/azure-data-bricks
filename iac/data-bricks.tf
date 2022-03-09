@@ -41,7 +41,7 @@ resource "azurerm_databricks_workspace" "dbx" {
   custom_parameters {
     virtual_network_id                                   = azurerm_virtual_network.vnet.id
     vnet_address_prefix                                  = "10.139"
-    storage_account_name                                 = local.fqrn
+    storage_account_name                                 = local.fqrn_condensed
     storage_account_sku_name                             = "Standard_ZRS"
     public_subnet_network_security_group_association_id  = azurerm_network_security_group.nsg.id
     private_subnet_network_security_group_association_id = azurerm_network_security_group.nsg.id
