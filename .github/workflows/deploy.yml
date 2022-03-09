@@ -10,6 +10,8 @@ on:
 
 env:
   WORKING_DIRECTORY: iac
+  DEPLOYER_SECRET: dbx-demo-eastus2-deployer
+  ACCESS_KEY_SECRET: tfdbxed-access-key
   REMOTE_STATE_RG: dbx-demo-eastus2
   REMOTE_STATE_SA: tfdbxed
   REMOTE_STATE_CONTAINER: dbx-remote-state-eastus2-demo
@@ -43,20 +45,20 @@ jobs:
           uses: azure/get-keyvault-secrets@v1
           with:
             keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
-            secrets: 'bricks-demo-eastus2-deployer, sabricksed-access-key'
+            secrets: '${{ env.DEPLOYER_SECRET }}, ${{ env.ACCESS_KEY_SECRET }}'
         - name: 'Setup Terraform'
           uses: hashicorp/setup-terraform@v1
         - name: 'Terraform Init'
           env: 
             TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
-            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sabricksed-access-key }}
+            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.${{ env.ACCESS_KEY_SECRET }} }}
           run: terraform init
         - name: 'Terraform Validate'
           run: terraform validate
         - name: 'Terraform Plan'
           env:        
-            ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.bricks-demo-eastus2-deployer }}
-            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sabricksed-access-key }}
+            ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.${{ env.DEPLOYER_SECRET }} }}
+            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.${{ env.ACCESS_KEY_SECRET }} }}
           run: terraform plan -out="./workload.tfplan"
         - name: 'Upload Plan'
           uses: actions/upload-artifact@v2
