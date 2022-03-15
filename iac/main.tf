@@ -1,7 +1,6 @@
 terraform {
   required_providers {
     azurerm = "~> 2.33"
-    random  = "~> 2.2"
   }
 
   backend "azurerm" {
@@ -33,7 +32,8 @@ variable "tags" {
   type = map(string)
 
   default = {
-    environment = "Demo"
+    environment = "demo"
+    workload    = "crypto-analytics"
   }
 }
 
