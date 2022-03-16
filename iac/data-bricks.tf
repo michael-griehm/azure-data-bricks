@@ -10,6 +10,48 @@ resource "azurerm_network_security_group" "nsg" {
   tags                = var.tags
 }
 
+resource "azurerm_network_security_rule" "databricks_control_plane_ssh" {
+  name                        = "databricks-control-plane-ssh"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_address_prefixes     = ["23.101.152.95/32", "20.41.4.112/32"]
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
+
+resource "azurerm_network_security_rule" "databricks_control_plane_worker_proxy" {
+  name                        = "databricks-control-plane-worker-proxy"
+  priority                    = 110
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_address_prefixes     = ["23.101.152.95/32", "20.41.4.112/32"]
+  source_port_range           = "*"
+  destination_port_range      = "5557"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
+
+resource "azurerm_network_security_rule" "databricks_worker_to_worker" {
+  name                        = "databricks-worker-to-worker"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_address_prefix       = "VirtualNetwork"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
+
 resource "azurerm_virtual_network" "vnet" {
   name                = local.fqrn
   location            = data.azurerm_resource_group.rg.location
@@ -38,14 +80,14 @@ resource "azurerm_databricks_workspace" "dbx" {
   tags                        = var.tags
   managed_resource_group_name = "${data.azurerm_resource_group.rg.name}-managed"
 
-  # custom_parameters {
-  #   virtual_network_id                                   = azurerm_virtual_network.vnet.id
-  #   vnet_address_prefix                                  = "10.139"
-  #   storage_account_name                                 = local.fqrn_condensed
-  #   storage_account_sku_name                             = "Standard_ZRS"
-  #   public_subnet_network_security_group_association_id  = azurerm_network_security_group.nsg.id
-  #   private_subnet_network_security_group_association_id = azurerm_network_security_group.nsg.id
-  #   public_subnet_name                                   = local.public_subnet
-  #   private_subnet_name                                  = local.private_subnet
-  # }
+  custom_parameters {
+    virtual_network_id                                   = azurerm_virtual_network.vnet.id
+    vnet_address_prefix                                  = "10.139"
+    storage_account_name                                 = local.fqrn_condensed
+    storage_account_sku_name                             = "Standard_ZRS"
+    public_subnet_network_security_group_association_id  = azurerm_network_security_group.nsg.id
+    private_subnet_network_security_group_association_id = azurerm_network_security_group.nsg.id
+    public_subnet_name                                   = local.public_subnet
+    private_subnet_name                                  = local.private_subnet
+  }
 }
