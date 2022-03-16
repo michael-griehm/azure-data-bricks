@@ -3,8 +3,8 @@ terraform {
     azurerm = "~> 2.33"
   }
 
-  # backend "azurerm" {
-  # }
+  backend "azurerm" {
+  }
 }
 
 provider "azurerm" {
