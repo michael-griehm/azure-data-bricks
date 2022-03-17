@@ -58,18 +58,59 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = data.azurerm_resource_group.rg.name
   address_space       = ["10.139.0.0/16"]
   tags                = var.tags
+}
 
-  subnet {
-    name           = local.public_subnet
-    address_prefix = "10.139.0.0/18"
-    security_group = azurerm_network_security_group.nsg.id
-  }
+resource "azurerm_subnet" "public_subnet" {
+  name                        = local.public_subnet
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  virtual_network_name        = azurerm_virtual_network.vnet.name
+  address_prefixes            = ["10.139.0.0/18"]
 
-  subnet {
-    name           = local.private_subnet
-    address_prefix = "10.139.64.0/18"
-    security_group = azurerm_network_security_group.nsg.id
+  delegation {
+    name = "delegation"
+
+    service_delegation {
+      name = "Microsoft.Databricks/workspaces"
+      actions = [
+        "Microsoft.Network/networkinterfaces/*",
+        "Microsoft.Network/virtualNetworks/subnets/action",
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+      "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"]
+    }
   }
+}
+
+resource "azurerm_subnet_network_security_group_association" "public_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.public_subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_subnet" "private_subnet" {
+  name                        = local.private_subnet
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  virtual_network_name        = azurerm_virtual_network.vnet.name
+  address_prefixes            = ["10.139.64.0/18"]
+  network_security_group_name = azurerm_network_security_group.nsg.name
+
+  delegation {
+    name = "delegation"
+
+    service_delegation {
+      name = "Microsoft.Databricks/workspaces"
+      actions = [
+        "Microsoft.Network/networkinterfaces/*",
+        "Microsoft.Network/virtualNetworks/subnets/action",
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+      "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"]
+    }
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "private_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.private_subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 resource "azurerm_databricks_workspace" "dbx" {

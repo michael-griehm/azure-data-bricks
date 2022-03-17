@@ -5,3 +5,5 @@
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/azure-workspace>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/>
+- <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet>
+- <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace#vnet_address_prefix>
