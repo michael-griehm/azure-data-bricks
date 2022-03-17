@@ -112,6 +112,8 @@ resource "azurerm_subnet_network_security_group_association" "private_subnet_nsg
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
+
+
 resource "azurerm_databricks_workspace" "dbx" {
   name                        = local.fqrn
   resource_group_name         = data.azurerm_resource_group.rg.name
@@ -123,7 +125,6 @@ resource "azurerm_databricks_workspace" "dbx" {
   custom_parameters {
     virtual_network_id                                   = azurerm_virtual_network.vnet.id
     vnet_address_prefix                                  = "10.139"
-    storage_account_name                                 = "${local.fqrn_condensed}managedsa37"
     storage_account_sku_name                             = "Standard_ZRS"
     public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
     private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
