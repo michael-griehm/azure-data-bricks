@@ -112,24 +112,24 @@ resource "azurerm_subnet_network_security_group_association" "private_subnet_nsg
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
-resource "azurerm_storage_account" "dbx_sa" {
-  name                      = "${local.fqrn_condensed}managedsa37"
-  resource_group_name       = data.azurerm_resource_group.rg.name
-  location                  = data.azurerm_resource_group.rg.location
-  account_kind              = "BlobStorage"
-  account_tier              = "Standard"
-  account_replication_type  = "GRS"
-  access_tier               = "Hot"
-  min_tls_version           = "TLS1_2"
-  allow_blob_public_access  = false
-  shared_access_key_enabled = true
-  is_hns_enabled            = false
-  tags                      = var.tags
+# resource "azurerm_storage_account" "dbx_sa" {
+#   name                      = "${local.fqrn_condensed}managedsa37"
+#   resource_group_name       = data.azurerm_resource_group.rg.name
+#   location                  = data.azurerm_resource_group.rg.location
+#   account_kind              = "BlobStorage"
+#   account_tier              = "Standard"
+#   account_replication_type  = "GRS"
+#   access_tier               = "Hot"
+#   min_tls_version           = "TLS1_2"
+#   allow_blob_public_access  = false
+#   shared_access_key_enabled = true
+#   is_hns_enabled            = false
+#   tags                      = var.tags
 
-  network_rules {
-    default_action = "Allow"
-  }
-}
+#   network_rules {
+#     default_action = "Allow"
+#   }
+# }
 
 resource "azurerm_databricks_workspace" "dbx" {
   name                        = local.fqrn
@@ -142,10 +142,10 @@ resource "azurerm_databricks_workspace" "dbx" {
   custom_parameters {
     virtual_network_id                                   = azurerm_virtual_network.vnet.id
     vnet_address_prefix                                  = "10.139"
-    storage_account_name                                 = azurerm_storage_account.dbx_sa.name
     public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
     private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
     public_subnet_name                                   = local.public_subnet
     private_subnet_name                                  = local.private_subnet
+    # storage_account_name                               = azurerm_storage_account.dbx_sa.name
   }
 }
