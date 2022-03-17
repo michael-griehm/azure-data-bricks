@@ -61,10 +61,10 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 resource "azurerm_subnet" "public_subnet" {
-  name                        = local.public_subnet
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  virtual_network_name        = azurerm_virtual_network.vnet.name
-  address_prefixes            = ["10.139.0.0/18"]
+  name                 = local.public_subnet
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.139.0.0/18"]
 
   delegation {
     name = "delegation"
@@ -87,11 +87,10 @@ resource "azurerm_subnet_network_security_group_association" "public_subnet_nsg"
 }
 
 resource "azurerm_subnet" "private_subnet" {
-  name                        = local.private_subnet
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  virtual_network_name        = azurerm_virtual_network.vnet.name
-  address_prefixes            = ["10.139.64.0/18"]
-  network_security_group_name = azurerm_network_security_group.nsg.name
+  name                 = local.private_subnet
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.139.64.0/18"]
 
   delegation {
     name = "delegation"
