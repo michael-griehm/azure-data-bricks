@@ -26,6 +26,10 @@
 
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
 
+## Access Azure Data Lake Gen 2 from Azure Databricks
+
+- <https://docs.databricks.com/data/data-sources/azure/adls-gen2/azure-datalake-gen2-get-started.html>
+
 ## References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
@@ -36,4 +40,3 @@
 - <https://techcommunity.microsoft.com/t5/azure-data-factory-blog/azure-databricks-activities-now-support-managed-identity/ba-p/1922818>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/workspace-management>
 - <https://www.azenix.com.au/blog/databricks-on-azure-with-terraform>
-- <https://docs.databricks.com/data/data-sources/azure/adls-gen2/azure-datalake-gen2-get-started.html>
