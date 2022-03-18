@@ -4,6 +4,10 @@
 
     $> az ad sp show --id 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d >azure_dbx_permission_list.json
 
+## Azure Data Bricks Pricing
+
+<https://databricks.com/product/azure-pricing>
+
 ## References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
