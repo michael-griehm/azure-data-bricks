@@ -43,3 +43,4 @@ resource "azurerm_key_vault_access_policy" "current_deployer_acl" {
     "Set"
   ]
 }
+

@@ -12,9 +12,19 @@
 
 - <https://databricks.com/product/azure-pricing>
 
+## Databricks CLI
+
+- <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/>
+
 ## Setup Key Vault Secret Scope
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/secrets>
+- <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secret-scopes#create-an-azure-key-vault-backed-secret-scope-using-the-databricks-cli>
+- <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
+
+## Set Secret
+
+- <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
 
 ## References
 
@@ -27,4 +37,3 @@
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/workspace-management>
 - <https://www.azenix.com.au/blog/databricks-on-azure-with-terraform>
 - <https://docs.databricks.com/data/data-sources/azure/adls-gen2/azure-datalake-gen2-get-started.html>
-- <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/>
