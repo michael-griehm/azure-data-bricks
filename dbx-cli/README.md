@@ -30,9 +30,13 @@ Run the following shell command
 
     databricks configure --token
 
-    https://adb-3560793084381069.9.azuredatabricks.net
+    https://adb-4588860002312821.1.azuredatabricks.net
 
-    dapid340f44d2f7116638809f59f3101500e-2
+    dapi39f577f5a9cbc426b9b3f645bce466b5-2
+
+## Create the Key Vault Secret Scope
+
+databricks secrets create-scope --scope "keyvault" --scope-backend-type AZURE_KEYVAULT --resource-id "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/sscatdbxeasdem" --dns-name "https://sscatdbxeasdem.vault.azure.net/"
 
 ## References
 

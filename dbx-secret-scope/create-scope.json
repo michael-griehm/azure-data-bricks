@@ -3,8 +3,8 @@
     "scope_backend_type": "AZURE_KEYVAULT",
     "backend_azure_keyvault":
     {
-      "resource_id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/azure-rg/providers/Microsoft.KeyVault/vaults/my-azure-kv",
-      "dns_name": "https://my-azure-kv.vault.azure.net/"
+      "resource_id": "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/sscatdbxeasdem",
+      "dns_name": "https://sscatdbxeasdem.vault.azure.net/"
     },
     "initial_manage_principal": "users"
   }

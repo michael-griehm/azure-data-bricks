@@ -4,9 +4,17 @@
 
     $> az ad sp show --id 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d >azure_dbx_permission_list.json
 
+## Get DBx Service Principal Token of behalf of User
+
+- <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/aad/app-aad-token>
+
 ## Azure Data Bricks Pricing
 
-<https://databricks.com/product/azure-pricing>
+- <https://databricks.com/product/azure-pricing>
+
+## Setup Key Vault Secret Scope
+
+- <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/secrets>
 
 ## References
 
