@@ -12,7 +12,7 @@ resource "azuread_application" "dbx_app_reg" {
 
     resource_access {
       id   = "739272be-e143-11e8-9f32-f2801f1b9fd1" # user_impersonation
-      type = "Role"
+      type = "Scope"
     }
   }
 }

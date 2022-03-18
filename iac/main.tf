@@ -12,7 +12,7 @@ provider "azurerm" {
 }
 
 variable "app_name" {
-  default   = "crypto-anal-dbx"
+  default   = "ca-t-dbx"
   type      = string
   sensitive = false
 }
