@@ -1,0 +1,10 @@
+{
+    "scope": "my-simple-azure-keyvault-scope",
+    "scope_backend_type": "AZURE_KEYVAULT",
+    "backend_azure_keyvault":
+    {
+      "resource_id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/azure-rg/providers/Microsoft.KeyVault/vaults/my-azure-kv",
+      "dns_name": "https://my-azure-kv.vault.azure.net/"
+    },
+    "initial_manage_principal": "users"
+  }

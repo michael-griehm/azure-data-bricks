@@ -1,3 +1,5 @@
+cd C:/Repos/github/michael-griehm/azure-databricks/dbx-secret-scope
+
 curl --netrc --request POST \
 https://adb-3560793084381069.9.azuredatabricks.net/api/2.0/secrets/scopes/create \
 --header "Content-Type: application/json" \
