@@ -6,8 +6,6 @@ on:
     paths:
       - iac/**
       - .github/workflows/deploy.yml
-  schedule:
-    - cron: "0 12 * * *"
   workflow_dispatch:
 
 env:

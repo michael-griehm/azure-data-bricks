@@ -32,11 +32,23 @@ Run the following shell command
 
     https://adb-4588860002312821.1.azuredatabricks.net
 
-    dapi39f577f5a9cbc426b9b3f645bce466b5-2
+    <azure-ad-access-token-from-py-script>
 
 ## Create the Key Vault Secret Scope
 
-databricks secrets create-scope --scope "keyvault" --scope-backend-type AZURE_KEYVAULT --resource-id "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/sscatdbxeasdem" --dns-name "https://sscatdbxeasdem.vault.azure.net/"
+    databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/sscatdbxeasdem" --dns-name "https://sscatdbxeasdem.vault.azure.net/" --initial-manage-principal users
+
+## List Secret Scopes
+
+    databricks secrets list-scopes
+
+## Delete Secret Scope
+
+    databricks secrets delete-scope --scope my-simple-azure-keyvault-scope
+
+## Add Secret
+
+    databricks secrets put --scope key-vault-secret-scope --key cryptoanalyticslake
 
 ## References
 
