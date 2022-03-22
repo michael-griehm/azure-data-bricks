@@ -46,14 +46,24 @@
 - <https://mkaz.blog/code/python-string-format-cookbook/>
 - <https://www.geeksforgeeks.org/get-yesterdays-date-using-python/>
 - <https://dev.to/sridharanprasanna/using-wildcards-for-folder-path-with-spark-dataframe-load-4jo7>
+- <https://stackoverflow.com/questions/32233575/read-all-files-in-a-nested-folder-in-spark>
 
-## Sort a Data Frame
+## Sort and Filter a Data Frame
 
 - <https://sparkbyexamples.com/spark/spark-how-to-sort-dataframe-column-explained/>
+- <https://sparkbyexamples.com/spark/spark-filter-rows-with-null-values/>
+
+## PySpark Data Types
+
+- <https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.sql.types.IntegerType.html>
 
 ## Mount Databricks to ADLS Gen 2
 
 - <https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-use-databricks-spark>
+
+## VS Code Tooling
+
+- <https://code.visualstudio.com/docs/datascience/jupyter-notebooks>
 
 ## References
 
