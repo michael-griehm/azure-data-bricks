@@ -30,6 +30,24 @@
 
 - <https://docs.databricks.com/data/data-sources/azure/adls-gen2/azure-datalake-gen2-get-started.html>
 
+## Convert Binary to String with DataFrame and Python
+
+- <https://stackoverflow.com/questions/57186799/how-to-extract-columns-from-binarytype-using-pyspark-databricks>
+
+## Avro Guide
+
+- <https://spark.apache.org/docs/latest/sql-data-sources-avro.html#supported-types-for-spark-sql---avro-conversion>
+- <https://docs.microsoft.com/en-us/azure/databricks/data/data-sources/read-avro>
+- <https://docs.databricks.com/data/data-sources/read-avro.html>
+
+## Pandas and Pythons
+
+- <https://www.geeksforgeeks.org/python-pandas-dataframe/>
+
+## Mount Databricks to ADLS Gen 2
+
+- <https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-use-databricks-spark>
+
 ## References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
