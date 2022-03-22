@@ -43,6 +43,9 @@
 ## Pandas and Pythons
 
 - <https://www.geeksforgeeks.org/python-pandas-dataframe/>
+- <https://mkaz.blog/code/python-string-format-cookbook/>
+- <https://www.geeksforgeeks.org/get-yesterdays-date-using-python/>
+- <https://dev.to/sridharanprasanna/using-wildcards-for-folder-path-with-spark-dataframe-load-4jo7>
 
 ## Sort a Data Frame
 

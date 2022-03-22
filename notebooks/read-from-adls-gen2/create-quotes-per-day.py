@@ -3,8 +3,18 @@ spark.conf.set(
     "fs.azure.account.key.cryptoanalyticslake.dfs.core.windows.net",
     dbutils.secrets.get(scope="key-vault-secret-scope",key="cryptoanalyticslake-access-key"))
 
-# Recursive data load for all files from a day from a single Event Hub Partition
-df = spark.read.option("recursiveFileLookup","true").option("header","true").format("avro").load("abfss://crypto-quotes@cryptoanalyticslake.dfs.core.windows.net/ehns-quote-streams/eh-crypto-stream/0/2022/03/11")
+# Set Day Month Year
+from datetime import date
+from datetime import timedelta
+
+today = date.today()
+yesterday = today - timedelta(days = 1)
+year = yesterday.year
+month = yesterday.month
+day = yesterday.day
+
+# Recursive data load for all files from a day from every partition in the Event Hub Namespace
+df = spark.read.option("recursiveFileLookup","true").option("header","true").format("avro").load(f"abfss://crypto-quotes@cryptoanalyticslake.dfs.core.windows.net/ehns-quote-streams/eh-crypto-stream/*/{year}/{month:0>2d}/{day:0>2d}")
 
 # Change the Body field from Binary to JSON 
 from pyspark.sql.functions import from_json, col
