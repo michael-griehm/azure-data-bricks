@@ -1,9 +1,11 @@
 name: destroy
 on:
+  schedule:
+    - cron: "0 23 * * *"
   workflow_dispatch:
 
 env:
-  WORKING_DIRECTORY: iac
+  WORKLOAD_WORKING_DIRECTORY: iac/workload
   REMOTE_STATE_RG: dbx-demo-eastus2
   REMOTE_STATE_SA: tfdbxed
   REMOTE_STATE_CONTAINER: dbx-remote-state-eastus2-demo
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+        working-directory: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
@@ -50,6 +52,7 @@ jobs:
       - name: 'Terraform Destroy'
         env:        
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+          TF_VAR_client_secret: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         run: terraform destroy -auto-approve
       - name: 'Azure CLI logout'

@@ -1,6 +1,9 @@
 terraform {
   required_providers {
-    azurerm = "~> 2.33"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 2.26"
+    }
   }
 
   backend "azurerm" {
@@ -45,11 +48,8 @@ variable "admin_user_principal_name" {
 }
 
 locals {
-  loc            = lower(replace(var.location, " ", ""))
-  a_name         = replace(var.app_name, "-", "")
-  fqrn           = "${var.app_name}-${var.env}-${local.loc}"
-  fqrn_condensed = "${length(local.a_name) > 22 ? substr(local.a_name, 0, 22) : local.a_name}${substr(local.loc, 0, 1)}${substr(var.env, 0, 1)}"
-  rg_name        = local.fqrn
+  loc    = lower(replace(var.location, " ", ""))
+  a_name = replace(var.app_name, "-", "")
 }
 
 data "azurerm_client_config" "current" {}
