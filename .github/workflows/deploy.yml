@@ -163,12 +163,12 @@ jobs:
         env:        
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
-        run: terraform plan -out="./key-vaults.tfplan"
+        run: terraform plan -out="./app-registration.tfplan"
       - name: 'Upload Plan'
         uses: actions/upload-artifact@v2
         with:
-          name: key-vaults-plan
-          path: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}/key-vaults.tfplan
+          name: app-registration-plan
+          path: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}/app-registration.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
@@ -207,9 +207,9 @@ jobs:
       - name: 'Download Plan'
         uses: actions/download-artifact@v2
         with:
-          name: key-vaults-plan
+          name: app-registration-plan
       - name: 'Move Plan'
-        run: mv ./key-vaults.tfplan ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
+        run: mv ./app-registration.tfplan ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
@@ -220,7 +220,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
-        run: terraform apply -auto-approve "./key-vaults.tfplan"
+        run: terraform apply -auto-approve "./app-registration.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
