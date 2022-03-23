@@ -127,14 +127,14 @@ resource "databricks_user" "dbx_admin" {
   ]
 }
 
-resource "databricks_secret_scope" "this" {
-  name = "keyvault-managed"
+# resource "databricks_secret_scope" "this" {
+#   name = "keyvault-managed"
 
-  keyvault_metadata {
-    resource_id = data.azurerm_key_vault.secret_scope_vault.id
-    dns_name    = data.azurerm_key_vault.secret_scope_vault.vault_uri
-  }
-}
+#   keyvault_metadata {
+#     resource_id = data.azurerm_key_vault.secret_scope_vault.id
+#     dns_name    = data.azurerm_key_vault.secret_scope_vault.vault_uri
+#   }
+# }
 
 resource "databricks_notebook" "create_quotes_per_day" {
   source   = "../../notebooks/create-quotes-per-day.ipynb"

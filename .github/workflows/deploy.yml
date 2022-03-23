@@ -227,3 +227,20 @@ jobs:
             az logout
             az cache purge
             az account clear
+  setup-key-vault-secret-scope:
+    name: 'setup-key-vault-secret-scope'
+    needs: apply-workload
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Setup Python'
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+      - name: 'Install Databricks CLI'
+        uses: microsoft/install-databricks-cli@v1.0.0
+      - name: 'Setup Databricks Token'
+        run: export DATABRICKS_AAD_TOKEN=${{ secrets.MY_AZURE_AD_TOKEN }}
+      
+      
