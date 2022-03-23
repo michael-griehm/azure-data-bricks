@@ -230,7 +230,7 @@ jobs:
             az account clear
   plan-workload:
       name: 'plan workload'
-      needs: apply-key-vaults
+      needs: apply-app-registration
       runs-on: ubuntu-latest
       defaults:
         run:
