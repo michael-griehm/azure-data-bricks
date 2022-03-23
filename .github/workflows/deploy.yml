@@ -11,10 +11,12 @@ on:
   workflow_dispatch:
 
 env:
+  KEY_VAULT_WORKING_DIRECTORY: iac/key-vault  
+  KEY_VAULT_REMOTE_STATE_KEY: dbx-key-vaults.terraform.tfstate
+  APP_REGISTRATION_WORKING_DIRECTORY: iac/app-registration
+  APP_REGISTRATION_REMOTE_STATE_KEY: dbx-app-registration.terraform.tfstate
   WORKLOAD_WORKING_DIRECTORY: iac/workload
   WORKLOAD_REMOTE_STATE_KEY: dbx.terraform.tfstate
-  KEY_VAULT_WORKING_DIRECTORY: iac/key-vault
-  KEY_VAULT_REMOTE_STATE_KEY: dbx-key-vaults.terraform.tfstate
   REMOTE_STATE_RG: dbx-demo-eastus2
   REMOTE_STATE_SA: tfdbxed
   REMOTE_STATE_CONTAINER: dbx-remote-state-eastus2-demo
@@ -27,8 +29,8 @@ permissions:
   contents: read
 
 jobs:
-  plan-key-vaults:
-    name: 'plan key vault infrastructure'
+  plan-key-vault:
+    name: 'plan key vault'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -75,9 +77,9 @@ jobs:
             az logout
             az cache purge
             az account clear
-  apply-key-vaults:
-    name: 'apply key vault infrastructure'
-    needs: plan-key-vaults
+  apply-key-vault:
+    name: 'apply key vault'
+    needs: plan-key-vault
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repo'
@@ -118,6 +120,106 @@ jobs:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
+        run: terraform apply -auto-approve "./key-vaults.tfplan"
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+  plan-app-registration:
+    name: 'plan app registration'
+    needs: apply-key-vault
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'dbx-demo-eastus2-deployer, tfdbxed-access-key'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.WORKLOAD_REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        run: terraform init
+      - name: 'Terraform Validate'
+        run: terraform validate
+      - name: 'Terraform Plan'
+        env:        
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        run: terraform plan -out="./key-vaults.tfplan"
+      - name: 'Upload Plan'
+        uses: actions/upload-artifact@v2
+        with:
+          name: key-vaults-plan
+          path: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}/key-vaults.tfplan
+          retention-days: 1
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+  apply-app-registration:
+    name: 'apply app registration'
+    needs: plan-app-registration
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'dbx-demo-eastus2-deployer, tfdbxed-access-key'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.APP_REGISTRATION_REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        working-directory: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
+        run: terraform init
+      - name: 'Download Plan'
+        uses: actions/download-artifact@v2
+        with:
+          name: key-vaults-plan
+      - name: 'Move Plan'
+        run: mv ./key-vaults.tfplan ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
+      - name: 'Delete Plan from Repo'
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: key-vaults-plan
+          failOnError: false
+      - name:  'Terraform Apply'
+        env:
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        working-directory: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./key-vaults.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1

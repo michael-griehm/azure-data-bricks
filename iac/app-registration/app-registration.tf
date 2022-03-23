@@ -1,6 +1,9 @@
 resource "azuread_application" "dbx_app_reg" {
   display_name     = "${var.app_name}-app-registration"
-  owners           = [data.azurerm_client_config.current.object_id]
+  owners           = [
+    data.azurerm_client_config.current.object_id,
+    data.azuread_user.admin.object_id
+  ]
   sign_in_audience = "AzureADMyOrg"
 
   public_client {
