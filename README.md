@@ -20,6 +20,7 @@
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/secrets>
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secret-scopes#create-an-azure-key-vault-backed-secret-scope-using-the-databricks-cli>
+- <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/#install-the-cli>
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
 
 ## Set Secret

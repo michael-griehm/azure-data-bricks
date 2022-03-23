@@ -6,8 +6,8 @@ on:
     paths:
       - iac/**
       - .github/workflows/deploy.yml
-  schedule:
-    - cron: "0 12 * * *"
+  # schedule:
+  #   - cron: "0 12 * * *"
   workflow_dispatch:
 
 env:
@@ -213,7 +213,7 @@ jobs:
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
-          name: key-vaults-plan
+          name: app-registration-plan
           failOnError: false
       - name:  'Terraform Apply'
         env:
@@ -329,13 +329,15 @@ jobs:
             az logout
             az cache purge
             az account clear
-  setup-key-vault-secret-scope:
-    name: 'setup-key-vault-secret-scope'
-    needs: apply-workload
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout Repo'
-        uses: actions/checkout@v2
+      - name: 'Terraform Output'
+        id: terraform
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.13
+          tf_actions_subcommand: 'output'
+          tf_actions_working_dir: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
+      - name: 'Use Terraform Output'
+        run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
       - name: 'Setup Python'
         uses: actions/setup-python@v3
         with:
@@ -343,6 +345,36 @@ jobs:
       - name: 'Install Databricks CLI'
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: 'Setup Databricks Token'
-        run: export DATABRICKS_AAD_TOKEN=${{ secrets.MY_AZURE_AD_TOKEN }}
+        run: |
+          adburl=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.name')
+          token=${{ secrets.MY_AZURE_AD_TOKEN }}
+          databricks configure --token <<EOF
+          $adburl
+          $token
+          EOF
+      
+      
+  # setup-key-vault-secret-scope:
+  #   name: 'setup-key-vault-secret-scope'
+  #   needs: apply-workload
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 'Checkout Repo'
+  #       uses: actions/checkout@v2
+  #     - name: 'Setup Python'
+  #       uses: actions/setup-python@v3
+  #       with:
+  #         python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+  #     - name: 'Install Databricks CLI'
+  #       uses: microsoft/install-databricks-cli@v1.0.0
+  #     - name: 'Setup Databricks Token'
+  #       run: |
+  #         adburl="https://centralus.azuredatabricks.net"
+  #         token=dapXXXXXXXXXXXXXXXXXXXX467
+  #         databricks configure --token <<EOF
+  #         $adburl
+  #         $token
+  #         EOF
+
       
       

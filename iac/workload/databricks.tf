@@ -106,6 +106,10 @@ resource "azurerm_databricks_workspace" "dbx" {
   }
 }
 
+output "azurerm_databricks_workspace_url" {
+  value = azurerm_databricks_workspace.dbx.workspace_url
+}
+
 provider "databricks" {
   host                        = azurerm_databricks_workspace.dbx.workspace_url
   azure_workspace_resource_id = azurerm_databricks_workspace.dbx.id
@@ -114,9 +118,18 @@ provider "databricks" {
   azure_client_secret         = var.client_secret
 }
 
-data "databricks_spark_version" "latest" {}
+data "databricks_spark_version" "latest" {
+  depends_on = [
+    azurerm_databricks_workspace.dbx
+  ]
+}
+
 data "databricks_node_type" "smallest" {
   local_disk = true
+
+  depends_on = [
+    azurerm_databricks_workspace.dbx
+  ]
 }
 
 resource "databricks_user" "dbx_admin" {
@@ -140,6 +153,10 @@ resource "databricks_notebook" "create_quotes_per_day" {
   source   = "../../notebooks/create-quotes-per-day.ipynb"
   path     = "/Jobs"
   language = "PYTHON"
+
+  depends_on = [
+    azurerm_databricks_workspace.dbx
+  ]
 }
 
 resource "databricks_job" "create_quotes_per_day_job" {
@@ -166,6 +183,10 @@ resource "databricks_job" "create_quotes_per_day_job" {
     quartz_cron_expression = "0 30 12 * * *"
     timezone_id            = "UTC"
   }
+
+  depends_on = [
+    azurerm_databricks_workspace.dbx
+  ]
 }
 
 resource "databricks_cluster" "experiment" {
@@ -176,4 +197,8 @@ resource "databricks_cluster" "experiment" {
     min_workers = 1
     max_workers = 2
   }
+
+  depends_on = [
+    azurerm_databricks_workspace.dbx
+  ]
 }
