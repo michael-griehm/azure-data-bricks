@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
+        working-directory: ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
