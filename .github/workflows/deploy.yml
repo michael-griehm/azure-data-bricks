@@ -33,8 +33,6 @@ jobs:
     defaults:
       run:
         ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
-    env:
-      REMOTE_STATE_KEY: ${{ env.KEY_VAULT_REMOTE_STATE_KEY }}
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
@@ -54,7 +52,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
       - name: 'Terraform Init'
         env: 
-          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.KEY_VAULT_REMOTE_STATE_KEY}}'"
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         run: terraform init
       - name: 'Terraform Validate'
@@ -81,8 +79,6 @@ jobs:
     name: 'apply key vault infrastructure'
     needs: plan-key-vaults
     runs-on: ubuntu-latest
-    env:
-      REMOTE_STATE_KEY: ${{ env.KEY_VAULT_REMOTE_STATE_KEY }}
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
@@ -102,7 +98,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
       - name: 'Terraform Init'
         env: 
-          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.KEY_VAULT_REMOTE_STATE_KEY}}'"
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
         run: terraform init
@@ -137,7 +133,6 @@ jobs:
       defaults:
         run:
           working-directory: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
-      REMOTE_STATE_KEY: ${{ env.WORKLOAD_REMOTE_STATE_KEY }}
       steps:
         - name: 'Checkout Repo'
           uses: actions/checkout@v2
@@ -157,7 +152,7 @@ jobs:
           uses: hashicorp/setup-terraform@v1
         - name: 'Terraform Init'
           env: 
-            TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+            TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.WORKLOAD_REMOTE_STATE_KEY}}'"
             ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
           run: terraform init
         - name: 'Terraform Validate'
@@ -215,7 +210,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
       - name: 'Terraform Init'
         env: 
-          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.WORKLOAD_REMOTE_STATE_KEY}}'"
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
         run: terraform init
