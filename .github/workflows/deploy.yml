@@ -412,6 +412,8 @@ jobs:
           secrets: 'dbx-demo-eastus2-deployer, tfdbxed-access-key'
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
       - name: 'Terraform Init'
         env: 
           TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.DBX_RESOURCES_REMOTE_STATE_KEY}}'"
