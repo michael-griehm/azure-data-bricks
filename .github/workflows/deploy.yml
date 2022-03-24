@@ -426,13 +426,6 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./dbx-resources.tfplan"
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
       - name:  'Terraform Output'
         env:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
@@ -446,6 +439,9 @@ jobs:
           KV_ID=$(terraform output -raw secret_scope_vault_id)
           echo $KV_ID
           echo "key_vault_id=$KV_ID" >> $GITHUB_ENV
+          KV_URL=$(terraform output -raw secret_scope_vault_hostname)
+          echo $KV_URL
+          echo "key_vault_url=$KV_URL" >> $GITHUB_ENV
       - name: 'Echo Terraform Output'
         run: |
           echo ${{ env.dbx_workspace_url }}
@@ -466,6 +462,13 @@ jobs:
           EOF
       - name: 'Configure Key Vault Scope'
         run: |
-          hostname=${{ env.dbx_workspace_url }}
+          hostname=${{ env.key_vault_url }}
           keyvaultid=${{ env.key_vault_id }}
           databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id $keyvaultid --dns-name $hostname --initial-manage-principal users
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear

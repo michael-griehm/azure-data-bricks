@@ -77,3 +77,7 @@ output "azurerm_databricks_workspace_url" {
 output "secret_scope_vault_id" {
   value = data.azurerm_key_vault.secret_scope_vault.id
 }
+
+output "secret_scope_vault_hostname" {
+  value = data.azurerm_key_vault.secret_scope_vault.vault_uri
+}
