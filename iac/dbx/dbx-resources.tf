@@ -22,7 +22,7 @@ resource "databricks_user" "dbx_admin" {
 }
 
 resource "databricks_notebook" "create_quotes_per_day" {
-  source   = "../../notebooks/create-quotes-per-day.ipynb"
+  source   = "../../notebooks/create-quotes-per-day.py"
   path     = "/Jobs"
   language = "PYTHON"
 }
@@ -56,7 +56,9 @@ resource "databricks_job" "create_quotes_per_day_job" {
 resource "databricks_cluster" "experiment" {
   cluster_name            = "experiment-cluster"
   spark_version           = data.databricks_spark_version.latest.id
+  node_type_id = data.databricks_node_type.smallest.id
   autotermination_minutes = 20
+  
   autoscale {
     min_workers = 1
     max_workers = 2
