@@ -70,10 +70,15 @@
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/workspace-management>
+- <https://www.terraform.io/cli/commands/output>
 
 ## Quartz Cron Job
 
 - <https://www.freeformatter.com/cron-expression-generator-quartz.html>
+
+## GitHub Actions Set Environment Variable in Step
+
+- <https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files>
 
 ## References
 

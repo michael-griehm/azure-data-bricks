@@ -439,9 +439,10 @@ jobs:
         run: |
           echo "dbx_workspace_url=$(terraform output -raw azurerm_databricks_workspace_url)"" >> $GITHUB_ENV
           echo "key_vault_id=$(terraform output -raw secret_scope_vault_id)"" >> $GITHUB_ENV
-      - name: 'Use Terraform Output'
+      - name: 'Echo Terraform Output'
         run: |
-          echo ${{ steps.terraform.outputs.tf_actions_output  }}
+          echo ${{ env.dbx_workspace_url }}
+          echo ${{ env.key_vault_id }}
       - name: 'Setup Python'
         uses: actions/setup-python@v3
         with:
