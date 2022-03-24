@@ -437,9 +437,9 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
         run: |
-          DBX_URL=$(terraform output -raw azurerm_databricks_workspace_url)
+          DBX_URL=$(terraform output azurerm_databricks_workspace_url)
           echo $DBX_URL
-          KV_ID=$(terraform output -raw secret_scope_vault_id)
+          KV_ID=$(terraform output secret_scope_vault_id)
           echo $KV_ID
           echo "dbx_workspace_url=$DBX_URL" >> $GITHUB_ENV
           echo "key_vault_id=$KV_ID" >> $GITHUB_ENV
