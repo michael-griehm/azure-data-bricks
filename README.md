@@ -71,6 +71,10 @@
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/workspace-management>
 
+## Quartz Cron Job
+
+- <https://www.freeformatter.com/cron-expression-generator-quartz.html>
+
 ## References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>

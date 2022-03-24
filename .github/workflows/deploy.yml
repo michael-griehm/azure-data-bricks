@@ -431,15 +431,17 @@ jobs:
             az logout
             az cache purge
             az account clear
-      - name: 'Terraform Output'
-        id: terraform
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.13
-          tf_actions_subcommand: 'output'
-          tf_actions_working_dir: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+      - name:  'Terraform Output'
+        env:
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+        run: |
+          echo "dbx_workspace_url=$(terraform output -raw azurerm_databricks_workspace_url)"" >> $GITHUB_ENV
+          echo "key_vault_id=$(terraform output -raw secret_scope_vault_id)"" >> $GITHUB_ENV
       - name: 'Use Terraform Output'
-        run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
+        run: |
+          echo ${{ steps.terraform.outputs.tf_actions_output  }}
       - name: 'Setup Python'
         uses: actions/setup-python@v3
         with:
@@ -448,14 +450,14 @@ jobs:
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: 'Setup Databricks Token'
         run: |
-          adburl=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.workspace_url')
+          adburl=${{ env.dbx_workspace_url }}
           token=${{ secrets.MY_AZURE_AD_TOKEN }}
           databricks configure --token <<EOF
           $adburl
           $token
           EOF
-      - name: 'Configure KEy Vault Scope'
+      - name: 'Configure Key Vault Scope'
         run: |
-          hostname=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.workspace_url')
-          keyvaultid=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.secret_scope_vault_id.value.id')
+          hostname=${{ env.dbx_workspace_url }}
+          keyvaultid=${{ env.key_vault_id }}
           databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id $keyvaultid --dns-name $hostname --initial-manage-principal users
