@@ -57,7 +57,7 @@ resource "databricks_cluster" "experiment" {
   cluster_name            = "experiment-cluster"
   spark_version           = data.databricks_spark_version.latest.id
   node_type_id = data.databricks_node_type.smallest.id
-  autotermination_minutes = 20
+  autotermination_minutes = 10
   
   autoscale {
     min_workers = 1
