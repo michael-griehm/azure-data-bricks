@@ -1,1 +1,1 @@
-az account get-access-token --tenant f4cb4c38-d7d4-4c0f-888c-05e0ce4d7437 --query 'accessToken' -o tsv
+az account get-access-token --scope 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --query 'accessToken' -o tsv
