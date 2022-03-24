@@ -426,13 +426,10 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./dbx-resources.tfplan"
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
+      - name: 'Azure CLI Get Access Token'
+        run: |
+          AZ_TOKEN=$(az account get-access-token --tenant ${{ secrets.TENANT_ID }} --query 'accessToken' -o tsv)
+          echo "az_token=$AZ_TOKEN" >> $GITHUB_ENV
       - name:  'Terraform Output'
         env:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
@@ -459,7 +456,7 @@ jobs:
       - name: 'Setup Databricks Token'
         run: |
           adburl=${{ env.dbx_workspace_url }}
-          token=${{ secrets.MY_AZURE_AD_TOKEN }}
+          token=${{ env.az_token }}
           databricks configure --token <<EOF
           $adburl
           $token
