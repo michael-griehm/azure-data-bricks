@@ -17,6 +17,8 @@ env:
   APP_REGISTRATION_REMOTE_STATE_KEY: dbx-app-registration.terraform.tfstate
   WORKLOAD_WORKING_DIRECTORY: iac/workload
   WORKLOAD_REMOTE_STATE_KEY: dbx.terraform.tfstate
+  DBX_RESOURCES_WORKING_DIRECTORY: iac/dbx
+  DBX_RESOURCES_REMOTE_STATE_KEY: dbx-resources.terraform.tfstate
   REMOTE_STATE_RG: dbx-demo-eastus2
   REMOTE_STATE_SA: tfdbxed
   REMOTE_STATE_CONTAINER: dbx-remote-state-eastus2-demo
@@ -262,7 +264,6 @@ jobs:
         - name: 'Terraform Plan'
           env:        
             ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
-            TF_VAR_client_secret: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
             ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
           run: terraform plan -out="./workload.tfplan"
         - name: 'Upload Plan'
@@ -329,13 +330,114 @@ jobs:
             az logout
             az cache purge
             az account clear
+  plan-dbx-resources:
+      name: 'plan dbx resources'
+      needs: apply-workload
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+      steps:
+        - name: 'Checkout Repo'
+          uses: actions/checkout@v2
+        - name: 'Azure Login'
+          uses: azure/login@v1
+          with:
+            tenant-id: ${{ secrets.TENANT_ID }}
+            subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+            client-id: ${{ secrets.CLIENT_ID }}
+        - name: 'Get Deployer Secrets'
+          id: get-deployer-secret
+          uses: azure/get-keyvault-secrets@v1
+          with:
+            keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+            secrets: 'dbx-demo-eastus2-deployer, tfdbxed-access-key'
+        - name: 'Setup Terraform'
+          uses: hashicorp/setup-terraform@v1
+        - name: 'Terraform Init'
+          env: 
+            TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.DBX_RESOURCES_REMOTE_STATE_KEY}}'"
+            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+          run: terraform init
+        - name: 'Terraform Validate'
+          run: terraform validate
+        - name: 'Terraform Plan'
+          env:        
+            ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+            TF_VAR_client_secret: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+            ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+          run: terraform plan -out="./dbx-resources.tfplan"
+        - name: 'Upload Plan'
+          uses: actions/upload-artifact@v2
+          with:
+            name: dbx-resources-plan
+            path: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}/dbx-resources.tfplan
+            retention-days: 1
+        - name: 'Azure CLI logout'
+          uses: azure/CLI@v1
+          with:
+            inlineScript: |
+              az logout
+              az cache purge
+              az account clear
+  apply-dbx-resources:
+    name: 'apply db resources'
+    needs: plan-dbx-resources
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Download Plan'
+        uses: actions/download-artifact@v2
+        with:
+          name: dbx-resources-plan
+      - name: 'Move Plan'
+        run: mv ./dbx-resources.tfplan ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+      - name: 'Delete Plan from Repo'
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: dbx-resources-plan
+          failOnError: false
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secrets'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'dbx-demo-eastus2-deployer, tfdbxed-access-key'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.DBX_RESOURCES_REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+        run: terraform init
+      - name:  'Terraform Apply'
+        env:
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.dbx-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
+        working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
+        run: terraform apply -auto-approve "./dbx-resources.tfplan"
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
       - name: 'Terraform Output'
         id: terraform
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'output'
-          tf_actions_working_dir: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
+          tf_actions_working_dir: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
       - name: 'Use Terraform Output'
         run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
       - name: 'Setup Python'
@@ -346,35 +448,14 @@ jobs:
         uses: microsoft/install-databricks-cli@v1.0.0
       - name: 'Setup Databricks Token'
         run: |
-          adburl=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.name')
+          adburl=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.workspace_url')
           token=${{ secrets.MY_AZURE_AD_TOKEN }}
           databricks configure --token <<EOF
           $adburl
           $token
           EOF
-      
-      
-  # setup-key-vault-secret-scope:
-  #   name: 'setup-key-vault-secret-scope'
-  #   needs: apply-workload
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 'Checkout Repo'
-  #       uses: actions/checkout@v2
-  #     - name: 'Setup Python'
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-  #     - name: 'Install Databricks CLI'
-  #       uses: microsoft/install-databricks-cli@v1.0.0
-  #     - name: 'Setup Databricks Token'
-  #       run: |
-  #         adburl="https://centralus.azuredatabricks.net"
-  #         token=dapXXXXXXXXXXXXXXXXXXXX467
-  #         databricks configure --token <<EOF
-  #         $adburl
-  #         $token
-  #         EOF
-
-      
-      
+      - name: 'Configure KEy Vault Scope'
+        run: |
+          hostname=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.azurerm_databricks_workspace_url.value.workspace_url')
+          keyvaultid=$(echo ${{ steps.terraform.outputs.tf_actions_output }} | jq -r '.secret_scope_vault_id.value.id')
+          databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id $keyvaultid --dns-name $hostname --initial-manage-principal users

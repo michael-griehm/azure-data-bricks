@@ -4,18 +4,18 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 2.26"
     }
+
+    databricks = {
+      source = "databrickslabs/databricks"
+    }
   }
 
-  # backend "azurerm" {
-  # }
+  backend "azurerm" {
+  }
 }
 
 provider "azurerm" {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy = true
-    }
-  }
+  features {}
 }
 
 variable "app_name" {
@@ -35,15 +35,6 @@ variable "location" {
   type      = string
 }
 
-variable "tags" {
-  type = map(string)
-
-  default = {
-    environment = "demo"
-    workload    = "crypto-analytics"
-  }
-}
-
 variable "admin_user_principal_name" {
   type        = string
   sensitive   = true
@@ -51,11 +42,15 @@ variable "admin_user_principal_name" {
   default     = "mikeg@ish-star.com"
 }
 
+variable "client_secret" {
+  type      = string
+  sensitive = true
+}
+
 locals {
-  loc            = lower(replace(var.location, " ", ""))
-  a_name         = replace(var.app_name, "-", "")
-  fqrn           = "${var.app_name}-${var.env}-${local.loc}"
-  fqrn_condensed = "${length(local.a_name) > 22 ? substr(local.a_name, 0, 22) : local.a_name}${substr(local.loc, 0, 1)}${substr(var.env, 0, 1)}"
+  loc  = lower(replace(var.location, " ", ""))
+  a_name = replace(var.app_name, "-", "")
+  fqrn = "${var.app_name}-${var.env}-${local.loc}"
 }
 
 data "azurerm_client_config" "current" {}
