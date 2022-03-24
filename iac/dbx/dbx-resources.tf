@@ -47,10 +47,10 @@ resource "databricks_job" "create_quotes_per_day_job" {
     no_alert_for_skipped_runs = true
   }
 
-  schedule {
-    quartz_cron_expression = "0 30 12 ? * * *"
-    timezone_id            = "UTC"
-  }
+  # schedule {
+  #   quartz_cron_expression = "0 30 12 ? * * *"
+  #   timezone_id            = "UTC"
+  # }
 }
 
 resource "databricks_cluster" "experiment" {
