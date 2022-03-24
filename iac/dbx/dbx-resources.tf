@@ -23,7 +23,7 @@ resource "databricks_user" "dbx_admin" {
 
 resource "databricks_notebook" "create_quotes_per_day" {
   source   = "../../notebooks/create-quotes-per-day.py"
-  path     = "/Jobs"
+  path     = "/jobs/create-quotes-per-day"
   language = "PYTHON"
 }
 
