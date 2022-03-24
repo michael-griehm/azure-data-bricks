@@ -48,7 +48,7 @@ resource "databricks_job" "create_quotes_per_day_job" {
   }
 
   schedule {
-    quartz_cron_expression = "0 30 12 * * *"
+    quartz_cron_expression = "0 30 12 ? * * *"
     timezone_id            = "UTC"
   }
 }
