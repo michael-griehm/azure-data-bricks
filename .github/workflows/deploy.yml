@@ -381,7 +381,7 @@ jobs:
               az cache purge
               az account clear
   apply-dbx-resources:
-    name: 'apply db resources'
+    name: 'apply dbx resources'
     needs: plan-dbx-resources
     runs-on: ubuntu-latest
     steps:
@@ -437,8 +437,8 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}
         run: |
-          echo "dbx_workspace_url=$(terraform output -raw azurerm_databricks_workspace_url)"" >> $GITHUB_ENV
-          echo "key_vault_id=$(terraform output -raw secret_scope_vault_id)"" >> $GITHUB_ENV
+          echo "dbx_workspace_url=$(terraform output -raw azurerm_databricks_workspace_url)" >> $GITHUB_ENV
+          echo "key_vault_id=$(terraform output -raw secret_scope_vault_id)" >> $GITHUB_ENV
       - name: 'Echo Terraform Output'
         run: |
           echo ${{ env.dbx_workspace_url }}
