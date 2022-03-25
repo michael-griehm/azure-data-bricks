@@ -21,14 +21,20 @@ resource "databricks_user" "dbx_admin" {
   user_name = data.azuread_user.admin.user_principal_name
 }
 
-resource "databricks_notebook" "create_quotes_per_day" {
-  source   = "../../notebooks/create-quotes-per-day.py"
-  path     = "/jobs/create-quotes-per-day"
+resource "databricks_notebook" "bronze_refine_quotes_yesterday" {
+  source   = "../../notebooks/bronze/refine-quotes-yesterday.py"
+  path     = "/jobs/bronze/refine-quotes-yesterday"
   language = "PYTHON"
 }
 
-resource "databricks_job" "create_quotes_per_day_job" {
-  name = "create-quotes-per-day-job"
+resource "databricks_notebook" "bronze_refine_quotes_today" {
+  source   = "../../notebooks/bronze/refine-quotes-today.py"
+  path     = "/jobs/bronze/refine-quotes-today"
+  language = "PYTHON"
+}
+
+resource "databricks_job" "bronze_refine_quotes_yesterday_job" {
+  name = "refine-quotes-yesterday-job"
 
   new_cluster {
     num_workers   = 1
@@ -37,7 +43,33 @@ resource "databricks_job" "create_quotes_per_day_job" {
   }
 
   notebook_task {
-    notebook_path = databricks_notebook.create_quotes_per_day.path
+    notebook_path = databricks_notebook.bronze_refine_quotes_yesterday.path
+  }
+
+  email_notifications {
+    on_start                  = [data.azuread_user.admin.user_principal_name]
+    on_failure                = [data.azuread_user.admin.user_principal_name]
+    on_success                = [data.azuread_user.admin.user_principal_name]
+    no_alert_for_skipped_runs = true
+  }
+
+  # schedule {
+  #   quartz_cron_expression = "0 30 12 ? * * *"
+  #   timezone_id            = "UTC"
+  # }
+}
+
+resource "databricks_job" "bronze_refine_quotes_today_job" {
+  name = "refine-quotes-today-job"
+
+  new_cluster {
+    num_workers   = 1
+    spark_version = data.databricks_spark_version.latest.id
+    node_type_id  = data.databricks_node_type.smallest.id
+  }
+
+  notebook_task {
+    notebook_path = databricks_notebook.bronze_refine_quotes_today.path
   }
 
   email_notifications {
