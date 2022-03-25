@@ -34,7 +34,7 @@ resource "databricks_notebook" "bronze_refine_quotes_today" {
 }
 
 resource "databricks_job" "bronze_refine_quotes_yesterday_job" {
-  name = "refine-quotes-yesterday-job"
+  name = "bronze-refine-quotes-yesterday-job"
 
   new_cluster {
     num_workers   = 1
@@ -60,7 +60,7 @@ resource "databricks_job" "bronze_refine_quotes_yesterday_job" {
 }
 
 resource "databricks_job" "bronze_refine_quotes_today_job" {
-  name = "refine-quotes-today-job"
+  name = "bronze-refine-quotes-today-job"
 
   new_cluster {
     num_workers   = 1

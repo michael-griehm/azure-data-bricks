@@ -1,7 +1,7 @@
 # Set the Datalake Access Key configuration
 spark.conf.set(
     "fs.azure.account.key.cryptoanalyticslake.dfs.core.windows.net",
-    dbutils.secrets.get(scope="keyvault-managed",key="cryptoanalyticslake-access-key"))
+    dbutils.secrets.get(scope="key-vault-secret-scope",key="cryptoanalyticslake-access-key"))
 
 # Set Day Month Year
 from datetime import datetime, timedelta
