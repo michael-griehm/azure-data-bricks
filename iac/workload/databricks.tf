@@ -18,55 +18,55 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
-resource "azurerm_subnet" "public_subnet" {
-  name                 = local.public_subnet
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.139.0.0/18"]
+# resource "azurerm_subnet" "public_subnet" {
+#   name                 = local.public_subnet
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+#   virtual_network_name = azurerm_virtual_network.vnet.name
+#   address_prefixes     = ["10.139.0.0/18"]
 
-  delegation {
-    name = "delegation"
+#   delegation {
+#     name = "delegation"
 
-    service_delegation {
-      name = "Microsoft.Databricks/workspaces"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
-        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
-      ]
-    }
-  }
-}
+#     service_delegation {
+#       name = "Microsoft.Databricks/workspaces"
+#       actions = [
+#         "Microsoft.Network/virtualNetworks/subnets/join/action",
+#         "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+#         "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
+#       ]
+#     }
+#   }
+# }
 
-resource "azurerm_subnet_network_security_group_association" "public_subnet_nsg" {
-  subnet_id                 = azurerm_subnet.public_subnet.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
+# resource "azurerm_subnet_network_security_group_association" "public_subnet_nsg" {
+#   subnet_id                 = azurerm_subnet.public_subnet.id
+#   network_security_group_id = azurerm_network_security_group.nsg.id
+# }
 
-resource "azurerm_subnet" "private_subnet" {
-  name                 = local.private_subnet
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.139.64.0/18"]
+# resource "azurerm_subnet" "private_subnet" {
+#   name                 = local.private_subnet
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+#   virtual_network_name = azurerm_virtual_network.vnet.name
+#   address_prefixes     = ["10.139.64.0/18"]
 
-  delegation {
-    name = "delegation"
+#   delegation {
+#     name = "delegation"
 
-    service_delegation {
-      name = "Microsoft.Databricks/workspaces"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
-        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
-      ]
-    }
-  }
-}
+#     service_delegation {
+#       name = "Microsoft.Databricks/workspaces"
+#       actions = [
+#         "Microsoft.Network/virtualNetworks/subnets/join/action",
+#         "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+#         "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
+#       ]
+#     }
+#   }
+# }
 
-resource "azurerm_subnet_network_security_group_association" "private_subnet_nsg" {
-  subnet_id                 = azurerm_subnet.private_subnet.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
+# resource "azurerm_subnet_network_security_group_association" "private_subnet_nsg" {
+#   subnet_id                 = azurerm_subnet.private_subnet.id
+#   network_security_group_id = azurerm_network_security_group.nsg.id
+# }
 
 resource "azurerm_databricks_workspace" "dbx" {
   name                        = local.fqrn
@@ -77,11 +77,11 @@ resource "azurerm_databricks_workspace" "dbx" {
   managed_resource_group_name = "${data.azurerm_resource_group.rg.name}-managed"
 
   custom_parameters {
-    virtual_network_id                                   = azurerm_virtual_network.vnet.id
-    vnet_address_prefix                                  = "10.139"
-    public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
-    private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
-    public_subnet_name                                   = local.public_subnet
-    private_subnet_name                                  = local.private_subnet
+    virtual_network_id  = azurerm_virtual_network.vnet.id
+    vnet_address_prefix = "10.139"
+    # public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
+    # private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
+    # public_subnet_name                                   = local.public_subnet
+    # private_subnet_name                                  = local.private_subnet
   }
 }
