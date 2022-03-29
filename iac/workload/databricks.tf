@@ -3,12 +3,12 @@ locals {
   private_subnet = "dbx-private"
 }
 
-resource "azurerm_network_security_group" "nsg" {
-  name                = local.fqrn
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
-  tags                = var.tags
-}
+# resource "azurerm_network_security_group" "nsg" {
+#   name                = local.fqrn
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   location            = data.azurerm_resource_group.rg.location
+#   tags                = var.tags
+# }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = local.fqrn
@@ -81,7 +81,7 @@ resource "azurerm_databricks_workspace" "dbx" {
     vnet_address_prefix = "10.139"
     # public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
     # private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
-    # public_subnet_name                                   = local.public_subnet
-    # private_subnet_name                                  = local.private_subnet
+    public_subnet_name  = local.public_subnet
+    private_subnet_name = local.private_subnet
   }
 }
