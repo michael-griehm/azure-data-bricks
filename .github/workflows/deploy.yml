@@ -70,13 +70,6 @@ jobs:
           name: key-vaults-plan
           path: ${{ env.KEY_VAULT_WORKING_DIRECTORY }}/key-vaults.tfplan
           retention-days: 1
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
   apply-key-vault:
     name: 'apply key vault'
     needs: plan-key-vault
@@ -121,13 +114,6 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.KEY_VAULT_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./key-vaults.tfplan"
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
   plan-app-registration:
     name: 'plan app registration'
     needs: apply-key-vault
@@ -170,13 +156,6 @@ jobs:
           name: app-registration-plan
           path: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}/app-registration.tfplan
           retention-days: 1
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
   apply-app-registration:
     name: 'apply app registration'
     needs: plan-app-registration
@@ -221,13 +200,6 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.APP_REGISTRATION_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./app-registration.tfplan"
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
   plan-workload:
       name: 'plan workload'
       needs: apply-app-registration
@@ -270,13 +242,6 @@ jobs:
             name: workload-plan
             path: ${{ env.WORKLOAD_WORKING_DIRECTORY }}/workload.tfplan
             retention-days: 1
-        - name: 'Azure CLI logout'
-          uses: azure/CLI@v1
-          with:
-            inlineScript: |
-              az logout
-              az cache purge
-              az account clear
   apply-workload:
     name: 'apply workload'
     needs: plan-workload
@@ -321,13 +286,6 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.tfdbxed-access-key }}
         working-directory: ${{ env.WORKLOAD_WORKING_DIRECTORY }}
         run: terraform apply -auto-approve "./workload.tfplan"
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
   plan-dbx-resources:
       name: 'plan dbx resources'
       needs: apply-workload
@@ -371,13 +329,6 @@ jobs:
             name: dbx-resources-plan
             path: ${{ env.DBX_RESOURCES_WORKING_DIRECTORY }}/dbx-resources.tfplan
             retention-days: 1
-        - name: 'Azure CLI logout'
-          uses: azure/CLI@v1
-          with:
-            inlineScript: |
-              az logout
-              az cache purge
-              az account clear
   apply-dbx-resources:
     name: 'apply dbx resources'
     needs: plan-dbx-resources
@@ -463,10 +414,3 @@ jobs:
           hostname=${{ env.key_vault_url }}
           keyvaultid=${{ env.key_vault_id }}
           databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id $keyvaultid --dns-name $hostname --initial-manage-principal users
-      - name: 'Azure CLI logout'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az logout
-            az cache purge
-            az account clear
