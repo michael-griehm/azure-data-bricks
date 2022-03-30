@@ -23,27 +23,59 @@ resource "databricks_user" "dbx_admin" {
 
 resource "databricks_notebook" "bronze_refine_quotes_yesterday" {
   source   = "../../notebooks/bronze/refine-quotes-yesterday.py"
-  path     = "/jobs/bronze/refine-quotes-yesterday"
+  path     = "/job-notebooks/bronze/refine-quotes-yesterday"
   language = "PYTHON"
 }
 
 resource "databricks_notebook" "bronze_refine_quotes_today" {
   source   = "../../notebooks/bronze/refine-quotes-today.py"
-  path     = "/jobs/bronze/refine-quotes-today"
+  path     = "/job-notebooks/bronze/refine-quotes-today"
   language = "PYTHON"
 }
 
-resource "databricks_job" "bronze_refine_quotes_yesterday_job" {
-  name = "bronze-refine-quotes-yesterday-job"
+resource "databricks_notebook" "silver_refine_quotes_yesterday" {
+  source   = "../../notebooks/silver/refine-quotes-yesterday.py"
+  path     = "/job-notebooks/silver/refine-quotes-yesterday"
+  language = "PYTHON"
+}
 
-  new_cluster {
-    num_workers   = 1
-    spark_version = data.databricks_spark_version.latest.id
-    node_type_id  = data.databricks_node_type.smallest.id
+resource "databricks_notebook" "silver_refine_quotes_today" {
+  source   = "../../notebooks/silver/refine-quotes-today.py"
+  path     = "/job-notebooks/silver/refine-quotes-today"
+  language = "PYTHON"
+}
+
+resource "databricks_job" "refine_quotes_yesterday_job" {
+  name = "refine-quotes-yesterday-job"
+
+  job_cluster {
+    job_cluster_key = "j"
+
+    new_cluster {
+      num_workers   = 1
+      spark_version = data.databricks_spark_version.latest.id
+      node_type_id  = data.databricks_node_type.smallest.id
+    }
   }
 
-  notebook_task {
-    notebook_path = databricks_notebook.bronze_refine_quotes_yesterday.path
+  task {
+    task_key = "a_bronze"
+
+    job_cluster_key = "j"
+
+    notebook_task {
+      notebook_path = databricks_notebook.bronze_refine_quotes_yesterday.path
+    }
+  }
+
+  task {
+    task_key = "b_silver"
+
+    job_cluster_key = "j"
+
+    notebook_task {
+      notebook_path = databricks_notebook.silver_refine_quotes_yesterday.path
+    }
   }
 
   email_notifications {
@@ -59,17 +91,37 @@ resource "databricks_job" "bronze_refine_quotes_yesterday_job" {
   # }
 }
 
-resource "databricks_job" "bronze_refine_quotes_today_job" {
-  name = "bronze-refine-quotes-today-job"
+resource "databricks_job" "refine_quotes_today_job" {
+  name = "refine-quotes-today-job"
 
-  new_cluster {
-    num_workers   = 1
-    spark_version = data.databricks_spark_version.latest.id
-    node_type_id  = data.databricks_node_type.smallest.id
+  job_cluster {
+    job_cluster_key = "j"
+
+    new_cluster {
+      num_workers   = 1
+      spark_version = data.databricks_spark_version.latest.id
+      node_type_id  = data.databricks_node_type.smallest.id
+    }
   }
 
-  notebook_task {
-    notebook_path = databricks_notebook.bronze_refine_quotes_today.path
+  task {
+    task_key = "a_bronze"
+
+    job_cluster_key = "j"
+
+    notebook_task {
+      notebook_path = databricks_notebook.bronze_refine_quotes_today.path
+    }
+  }
+
+  task {
+    task_key = "b_silver"
+
+    job_cluster_key = "j"
+
+    notebook_task {
+      notebook_path = databricks_notebook.silver_refine_quotes_today.path
+    }
   }
 
   email_notifications {
@@ -88,9 +140,9 @@ resource "databricks_job" "bronze_refine_quotes_today_job" {
 resource "databricks_cluster" "experiment" {
   cluster_name            = "experiment-cluster"
   spark_version           = data.databricks_spark_version.latest.id
-  node_type_id = data.databricks_node_type.smallest.id
+  node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 10
-  
+
   autoscale {
     min_workers = 1
     max_workers = 2
@@ -98,8 +150,8 @@ resource "databricks_cluster" "experiment" {
 }
 
 data "azurerm_key_vault" "secret_scope_vault" {
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  name                        = "secscp${length(local.a_name) > 12 ? substr(local.a_name, 0, 12) : local.a_name}${substr(local.loc, 0, 3)}${substr(var.env, 0, 3)}"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  name                = "secscp${length(local.a_name) > 12 ? substr(local.a_name, 0, 12) : local.a_name}${substr(local.loc, 0, 3)}${substr(var.env, 0, 3)}"
 }
 
 output "azurerm_databricks_workspace_url" {

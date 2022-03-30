@@ -48,9 +48,9 @@ variable "client_secret" {
 }
 
 locals {
-  loc  = lower(replace(var.location, " ", ""))
+  loc    = lower(replace(var.location, " ", ""))
   a_name = replace(var.app_name, "-", "")
-  fqrn = "${var.app_name}-${var.env}-${local.loc}"
+  fqrn   = "${var.app_name}-${var.env}-${local.loc}"
 }
 
 data "azurerm_client_config" "current" {}
