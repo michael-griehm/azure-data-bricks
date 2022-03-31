@@ -49,7 +49,7 @@ resource "databricks_job" "refine_quotes_yesterday_job" {
   name = "refine-quotes-yesterday-job"
 
   job_cluster {
-    job_cluster_key = "j"
+    job_cluster_key = "refine-quotes-yesterday-job-cluster"
 
     new_cluster {
       num_workers   = 1
@@ -61,7 +61,7 @@ resource "databricks_job" "refine_quotes_yesterday_job" {
   task {
     task_key = "a_bronze"
 
-    job_cluster_key = "j"
+    job_cluster_key = "refine-quotes-yesterday-job-cluster"
 
     notebook_task {
       notebook_path = databricks_notebook.bronze_refine_quotes_yesterday.path
@@ -71,7 +71,11 @@ resource "databricks_job" "refine_quotes_yesterday_job" {
   task {
     task_key = "b_silver"
 
-    job_cluster_key = "j"
+    depends_on {
+      task_key = "a_bronze"
+    }
+
+    job_cluster_key = "refine-quotes-yesterday-job-cluster"
 
     notebook_task {
       notebook_path = databricks_notebook.silver_refine_quotes_yesterday.path
@@ -95,7 +99,7 @@ resource "databricks_job" "refine_quotes_today_job" {
   name = "refine-quotes-today-job"
 
   job_cluster {
-    job_cluster_key = "j"
+    job_cluster_key = "refine-quotes-today-job-cluster"
 
     new_cluster {
       num_workers   = 1
@@ -107,7 +111,7 @@ resource "databricks_job" "refine_quotes_today_job" {
   task {
     task_key = "a_bronze"
 
-    job_cluster_key = "j"
+    job_cluster_key = "refine-quotes-today-job-cluster"
 
     notebook_task {
       notebook_path = databricks_notebook.bronze_refine_quotes_today.path
@@ -117,7 +121,11 @@ resource "databricks_job" "refine_quotes_today_job" {
   task {
     task_key = "b_silver"
 
-    job_cluster_key = "j"
+    depends_on {
+      task_key = "a_bronze"
+    }
+
+    job_cluster_key = "refine-quotes-today-job-cluster"
 
     notebook_task {
       notebook_path = databricks_notebook.silver_refine_quotes_today.path
