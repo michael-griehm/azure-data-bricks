@@ -45,6 +45,18 @@ resource "databricks_notebook" "silver_refine_quotes_today" {
   language = "PYTHON"
 }
 
+resource "databricks_notebook" "gold_refine_quotes_yesterday" {
+  source   = "../../notebooks/gold/refine-quotes-yesterday.py"
+  path     = "/job-notebooks/gold/refine-quotes-yesterday"
+  language = "PYTHON"
+}
+
+resource "databricks_notebook" "gold_refine_quotes_today" {
+  source   = "../../notebooks/gold/refine-quotes-today.py"
+  path     = "/job-notebooks/gold/refine-quotes-today"
+  language = "PYTHON"
+}
+
 resource "databricks_job" "refine_quotes_yesterday_job" {
   name = "refine-quotes-yesterday-job"
 
@@ -79,6 +91,20 @@ resource "databricks_job" "refine_quotes_yesterday_job" {
 
     notebook_task {
       notebook_path = databricks_notebook.silver_refine_quotes_yesterday.path
+    }
+  }
+
+  task {
+    task_key = "c_gold"
+
+    depends_on {
+      task_key = "b_silver"
+    }
+
+    job_cluster_key = "refine-quotes-yesterday-job-cluster"
+
+    notebook_task {
+      notebook_path = databricks_notebook.gold_refine_quotes_yesterday.path
     }
   }
 
@@ -129,6 +155,20 @@ resource "databricks_job" "refine_quotes_today_job" {
 
     notebook_task {
       notebook_path = databricks_notebook.silver_refine_quotes_today.path
+    }
+  }
+
+  task {
+    task_key = "c_gold"
+
+    depends_on {
+      task_key = "b_silver"
+    }
+
+    job_cluster_key = "refine-quotes-today-job-cluster"
+
+    notebook_task {
+      notebook_path = databricks_notebook.gold_refine_quotes_today.path
     }
   }
 

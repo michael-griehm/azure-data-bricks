@@ -6,12 +6,13 @@ spark.conf.set(
 
 # %%
 # Set Day Month Year
-from datetime import datetime
+from datetime import datetime, timedelta
 
 today = datetime.utcnow()
-year = today.year
-month = today.month
-day = today.day
+yesterday = today - timedelta(days = 1)
+year = yesterday.year
+month = yesterday.month
+day = yesterday.day
 
 # %%
 # Recursive data load for all files from a day from every partition in the Event Hub Namespace
