@@ -14,3 +14,24 @@ resource "azurerm_key_vault_secret" "datalake_access_key" {
   key_vault_id = data.azurerm_key_vault.secret_scope_vault.id
   tags         = var.tags
 }
+
+resource "azurerm_key_vault_secret" "snowflake_url" {
+  name         = "snowflake-url"
+  value        = var.snowflake_url
+  key_vault_id = data.azurerm_key_vault.secret_scope_vault.id
+  tags         = var.tags
+}
+
+resource "azurerm_key_vault_secret" "snowflake_username" {
+  name         = "snowflake-username"
+  value        = var.snowflake_username
+  key_vault_id = data.azurerm_key_vault.secret_scope_vault.id
+  tags         = var.tags
+}
+
+resource "azurerm_key_vault_secret" "snowflake_password" {
+  name         = "snowflake-password"
+  value        = var.snowflake_password
+  key_vault_id = data.azurerm_key_vault.secret_scope_vault.id
+  tags         = var.tags
+}
