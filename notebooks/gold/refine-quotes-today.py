@@ -15,7 +15,7 @@ day = today.day
 
 # %%
 # Recursive data load for all files from a day from every partition in the Event Hub Namespace
-import org.apache.spark.sql.functions.to_date
+from pyspark.sql.functions import to_date
 sourcefolderpath = f"abfss://crypto-silver@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day/{year}/{month:0>2d}/{day:0>2d}"
 
 print(sourcefolderpath)

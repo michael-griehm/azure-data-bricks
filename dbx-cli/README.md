@@ -32,7 +32,7 @@ Run the following shell command
 
 ## Create the Key Vault Secret Scope
 
-    databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/sscatdbxeasdem" --dns-name "https://sscatdbxeasdem.vault.azure.net/" --initial-manage-principal users
+    databricks secrets create-scope --scope "key-vault-secret-scope" --scope-backend-type AZURE_KEYVAULT --resource-id "/subscriptions/95b4e3af-639e-45a3-90d7-abbe267d6816/resourceGroups/dbx-demo-eastus2/providers/Microsoft.KeyVault/vaults/secscpcatdbxeasdem" --dns-name "https://secscpcatdbxeasdem.vault.azure.net/" --initial-manage-principal users
 
 ## List Secret Scopes
 
