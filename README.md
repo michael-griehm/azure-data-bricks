@@ -80,6 +80,10 @@
 
 - <https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files>
 
+## Deltalake
+
+- <https://docs.microsoft.com/en-us/azure/databricks/delta/delta-intro>
+
 ## References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
