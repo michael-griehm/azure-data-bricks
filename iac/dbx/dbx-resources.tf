@@ -21,21 +21,9 @@ resource "databricks_user" "dbx_admin" {
   user_name = data.azuread_user.admin.user_principal_name
 }
 
-resource "databricks_notebook" "bronze_refine_quotes_yesterday" {
-  source   = "../../notebooks/bronze/refine-quotes-yesterday.py"
-  path     = "/job-notebooks/bronze/refine-quotes-yesterday"
-  language = "PYTHON"
-}
-
 resource "databricks_notebook" "bronze_refine_quotes_today" {
   source   = "../../notebooks/bronze/refine-quotes-today.py"
   path     = "/job-notebooks/bronze/refine-quotes-today"
-  language = "PYTHON"
-}
-
-resource "databricks_notebook" "silver_refine_quotes_yesterday" {
-  source   = "../../notebooks/silver/refine-quotes-yesterday.py"
-  path     = "/job-notebooks/silver/refine-quotes-yesterday"
   language = "PYTHON"
 }
 
@@ -45,80 +33,10 @@ resource "databricks_notebook" "silver_refine_quotes_today" {
   language = "PYTHON"
 }
 
-resource "databricks_notebook" "gold_refine_quotes_yesterday" {
-  source   = "../../notebooks/gold/refine-quotes-yesterday.py"
-  path     = "/job-notebooks/gold/refine-quotes-yesterday"
-  language = "PYTHON"
-}
-
 resource "databricks_notebook" "gold_refine_quotes_today" {
   source   = "../../notebooks/gold/refine-quotes-today.py"
   path     = "/job-notebooks/gold/refine-quotes-today"
   language = "PYTHON"
-}
-
-resource "databricks_job" "refine_quotes_yesterday_job" {
-  name = "refine-quotes-yesterday-job"
-
-  job_cluster {
-    job_cluster_key = "refine-quotes-yesterday-job-cluster"
-
-    new_cluster {
-      num_workers   = 1
-      spark_version = data.databricks_spark_version.latest.id
-      node_type_id  = data.databricks_node_type.smallest.id
-    }
-  }
-
-  task {
-    task_key = "a_bronze"
-
-    job_cluster_key = "refine-quotes-yesterday-job-cluster"
-
-    notebook_task {
-      notebook_path = databricks_notebook.bronze_refine_quotes_yesterday.path
-    }
-  }
-
-  task {
-    task_key = "b_silver"
-
-    depends_on {
-      task_key = "a_bronze"
-    }
-
-    job_cluster_key = "refine-quotes-yesterday-job-cluster"
-
-    notebook_task {
-      notebook_path = databricks_notebook.silver_refine_quotes_yesterday.path
-    }
-  }
-
-  task {
-    task_key = "c_gold"
-
-    depends_on {
-      task_key = "b_silver"
-    }
-
-    job_cluster_key = "refine-quotes-yesterday-job-cluster"
-
-    notebook_task {
-      notebook_path = databricks_notebook.gold_refine_quotes_yesterday.path
-    }
-  }
-
-  email_notifications {
-    on_start                  = [data.azuread_user.admin.user_principal_name]
-    on_failure                = [data.azuread_user.admin.user_principal_name]
-    on_success                = [data.azuread_user.admin.user_principal_name]
-    no_alert_for_skipped_runs = true
-  }
-
-  # schedule {
-  #   quartz_cron_expression = "0 30 12 ? * * *"
-  #   timezone_id            = "UTC"
-  # }
 }
 
 resource "databricks_job" "refine_quotes_today_job" {
@@ -179,10 +97,10 @@ resource "databricks_job" "refine_quotes_today_job" {
     no_alert_for_skipped_runs = true
   }
 
-  # schedule {
-  #   quartz_cron_expression = "0 30 12 ? * * *"
-  #   timezone_id            = "UTC"
-  # }
+  schedule {
+    quartz_cron_expression = "0 55 ? * * * *"
+    timezone_id            = "UTC"
+  }
 }
 
 resource "databricks_cluster" "experiment" {

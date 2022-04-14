@@ -21,6 +21,10 @@ print(sourcefolderpath)
 
 df = spark.read.option("recursiveFileLookup","true").option("header","true").format("avro").load(sourcefolderpath)
 
+display(df)
+
+df.printSchema()
+
 # %%
 # Change the Body field from Binary to JSON 
 from pyspark.sql.functions import from_json, col
@@ -34,6 +38,8 @@ sourceSchema = StructType([
 df = df.withColumn("StringBody", col("Body").cast("string"))
 jsonOptions = {"dateFormat" : "yyyy-MM-dd HH:mm:ss.SSS"}
 df = df.withColumn("JsonBody", from_json(df.StringBody, sourceSchema, jsonOptions))
+
+display(df)
 
 # %%
 # Flattent he Body JSON field into columns of the DataFrame
@@ -49,13 +55,26 @@ df = df.filter("Price > 0")
 df = df.sort("Symbol", "PriceTimeStamp")
 
 # %%
+display(df)
+
+# %%
 # Select only the meaningful columns for the export to Bronze data zone
 exportDF = df.select("Symbol", "Price", "PriceTimeStamp")
 
+# %%
 # Write the partquet file in the bronze crypto data zone
-destinationfolderpath = f"abfss://crypto-bronze@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day/{year}/{month:0>2d}/{day:0>2d}"
+sparkpartitionfolderpath = f"abfss://crypto-bronze@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day-spark-partition"
 
-print(destinationfolderpath)
+print(sparkpartitionfolderpath)
 
-exportDF.write.mode("overwrite").parquet(destinationfolderpath)
+exportDF.write.partitionBy("PriceDate").mode("overwrite").parquet(sparkpartitionfolderpath)
+
+# %%
+# Write the partquet file in the bronze crypto data zone
+manualpartitionfolderpath = f"abfss://crypto-bronze@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day-manual-partition/{year}/{month:0>2d}/{day:0>2d}"
+
+print(manualpartitionfolderpath)
+
+exportDF.write.mode("overwrite").parquet(manualpartitionfolderpath)
+
 
