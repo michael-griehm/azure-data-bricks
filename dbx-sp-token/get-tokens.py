@@ -43,5 +43,3 @@ if 'error' in acquire_tokens_result:
 else:
   print("Access token:\n")
   print(acquire_tokens_result['access_token'])
-  print("\nRefresh token:\n")
-  print(acquire_tokens_result['refresh_token'])
