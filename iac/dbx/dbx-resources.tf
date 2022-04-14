@@ -98,7 +98,7 @@ resource "databricks_job" "refine_quotes_today_job" {
   }
 
   schedule {
-    quartz_cron_expression = "0 55 ? * * * *"
+    quartz_cron_expression = "0 15 3,13,16,19,22 ? * * *"
     timezone_id            = "UTC"
   }
 }
