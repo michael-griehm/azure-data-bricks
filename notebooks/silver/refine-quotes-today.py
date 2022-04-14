@@ -22,9 +22,6 @@ print(sourcefolderpath)
 df = spark.read.option("recursiveFileLookup","true").parquet(sourcefolderpath)
 
 # %%
-display(df)
-
-# %%
 # Write the partquet file in the bronze crypto data zone
 sparkpartitionfolderpath = f"abfss://crypto-silver@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day/spark-partition"
 
