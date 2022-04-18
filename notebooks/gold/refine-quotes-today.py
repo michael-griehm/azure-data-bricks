@@ -15,7 +15,7 @@ day = today.day
 
 # %%
 # Recursive data load for all files from a day from every partition in the Event Hub Namespace
-sourcefolderpath = f"abfss://crypto-silver@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day/{year}/{month:0>2d}/{day:0>2d}"
+sourcefolderpath = f"abfss://crypto-silver@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day/manual-partition/{year}/{month:0>2d}/{day:0>2d}"
 
 print(sourcefolderpath)
 
