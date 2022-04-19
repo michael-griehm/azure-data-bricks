@@ -108,12 +108,15 @@ resource "databricks_cluster" "experiment" {
   spark_version           = data.databricks_spark_version.latest.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 10
-  data_security_mode      = "SINGLE_USER"
   single_user_name        = data.azuread_user.admin.user_principal_name
 
   autoscale {
     min_workers = 1
     max_workers = 2
+  }
+
+  spark_conf = {
+    "spark.databricks.passthrough.enabled": "true"
   }
 }
 
