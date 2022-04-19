@@ -116,7 +116,7 @@ resource "databricks_cluster" "experiment" {
   }
 
   spark_conf = {
-    "spark.databricks.passthrough.enabled": "true"
+    "spark.databricks.passthrough.enabled" : "true"
   }
 }
 
