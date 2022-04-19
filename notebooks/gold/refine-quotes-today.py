@@ -32,7 +32,7 @@ destinationfolderpath = f"abfss://crypto-gold@cryptoanalyticslake.dfs.core.windo
 
 print(destinationfolderpath)
 
-df.write.partitionBy("PriceDate").format("csv").mode("append").option("header", "true").save(destinationfolderpath)
+df.write.partitionBy("price_date").format("csv").mode("append").option("header", "true").save(destinationfolderpath)
 
 # %%
 singlecsvdestinationfolderpath = f"abfss://crypto-gold@cryptoanalyticslake.dfs.core.windows.net/quotes-by-day-manual-partition-single-file/{year}/{month:0>2d}/{day:0>2d}"
