@@ -116,7 +116,7 @@ resource "databricks_cluster" "experiment" {
 }
 
 resource "databricks_cluster" "aad_passthru_cluster" {
-  cluster_name            = "experiment-cluster"
+  cluster_name            = "aad-passthru-cluster"
   spark_version           = data.databricks_spark_version.latest.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 10
