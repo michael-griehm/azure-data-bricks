@@ -115,6 +115,20 @@ resource "databricks_cluster" "experiment" {
   }
 }
 
+resource "databricks_cluster" "aad_passthru_cluster" {
+  cluster_name            = "experiment-cluster"
+  spark_version           = data.databricks_spark_version.latest.id
+  node_type_id            = data.databricks_node_type.smallest.id
+  autotermination_minutes = 10
+  data_security_mode      = "SINGLE_USER"
+  single_user_name        = data.azuread_user.admin.user_principal_name
+
+  autoscale {
+    min_workers = 1
+    max_workers = 2
+  }
+}
+
 data "azurerm_key_vault" "secret_scope_vault" {
   resource_group_name = data.azurerm_resource_group.rg.name
   name                = "secscp${length(local.a_name) > 12 ? substr(local.a_name, 0, 12) : local.a_name}${substr(local.loc, 0, 3)}${substr(var.env, 0, 3)}"
