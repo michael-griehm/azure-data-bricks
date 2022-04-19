@@ -72,16 +72,16 @@ resource "azurerm_databricks_workspace" "dbx" {
   name                        = local.fqrn
   resource_group_name         = data.azurerm_resource_group.rg.name
   location                    = data.azurerm_resource_group.rg.location
-  sku                         = "standard"
+  sku                         = "premium"
   tags                        = var.tags
   managed_resource_group_name = "${data.azurerm_resource_group.rg.name}-managed"
 
   custom_parameters {
-    virtual_network_id  = azurerm_virtual_network.vnet.id
-    vnet_address_prefix = "10.139"
+    virtual_network_id                                   = azurerm_virtual_network.vnet.id
+    vnet_address_prefix                                  = "10.139"
     public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public_subnet_nsg.id
     private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private_subnet_nsg.id
-    public_subnet_name  = local.public_subnet
-    private_subnet_name = local.private_subnet
+    public_subnet_name                                   = local.public_subnet
+    private_subnet_name                                  = local.private_subnet
   }
 }

@@ -108,20 +108,7 @@ resource "databricks_cluster" "experiment" {
   spark_version           = data.databricks_spark_version.latest.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 10
-
-  autoscale {
-    min_workers = 1
-    max_workers = 2
-  }
-}
-
-resource "databricks_cluster" "aad_passthru_cluster" {
-  cluster_name            = "aad-passthru-cluster"
-  spark_version           = data.databricks_spark_version.latest.id
-  node_type_id            = data.databricks_node_type.smallest.id
-  autotermination_minutes = 10
-  data_security_mode      = "SINGLE_USER"
-  single_user_name        = data.azuread_user.admin.user_principal_name
+  data_security_mode      = "LEGACY_PASSTHROUGH"
 
   autoscale {
     min_workers = 1
