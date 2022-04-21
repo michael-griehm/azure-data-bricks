@@ -98,7 +98,7 @@ resource "databricks_job" "refine_quotes_today_job" {
   }
 
   schedule {
-    quartz_cron_expression = "0 45 3,6,9,19,22 ? * * *"
+    quartz_cron_expression = "0 45 2,5,14,17,20,23, ? * * *"
     timezone_id            = "UTC"
   }
 }
@@ -108,10 +108,15 @@ resource "databricks_cluster" "experiment" {
   spark_version           = data.databricks_spark_version.latest.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 10
+  single_user_name        = data.azuread_user.admin.user_principal_name
 
   autoscale {
     min_workers = 1
     max_workers = 2
+  }
+
+  spark_conf = {
+    "spark.databricks.passthrough.enabled" : "true"
   }
 }
 

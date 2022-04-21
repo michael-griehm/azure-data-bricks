@@ -1,5 +1,11 @@
 # azure-data-bricks
 
+This repo contains examples of how to configure and deploy the Azure Databricks platform as a service offering.  It also contains examples of Python based Databricks notebooks reading and writing files within an instance of the Azure Data Lake Gen 2 service offering.
+
+## Folder Structure
+
+
+
 ## Get Databricks API Permission Ids
 
     $> az ad sp show --id 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d >azure_dbx_permission_list.json
