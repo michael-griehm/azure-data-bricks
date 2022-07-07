@@ -1,5 +1,8 @@
 {
     "files.watcherExclude": {
         "**/target": true
+    },
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///c%3A/Coding/michael-griehm/azure-databricks/.github/workflows/deploy.yml"
     }
 }
