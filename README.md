@@ -1,53 +1,87 @@
 # azure-data-bricks
 
-This repo contains examples of how to configure and deploy the Azure Databricks platform as a service offering.  It also contains examples of Python based Databricks notebooks reading and writing files within an instance of the Azure Data Lake Gen 2 service offering.
+This repo contains examples of how to configure and deploy the Azure Databricks platform as a service offering.  It also contains examples of Python based Databricks notebooks reading and writing files within an instance of the Azure Data Lake Gen 2 and Snowflake Data Warehouse.
 
-## Folder Structure
+## What is Databricks?
 
+Databricks is a lakehouse platform built for the cloud.
 
+Databricks combines the best of data warehouses and data lakes to offer an open and unified platform for data and AI.
 
-## Get Databricks API Permission Ids
+The engine that powers Databricks interaction with big data is called Spark.
+
+## Spark
+
+Spark is the data access, mutation, and persistent engine that powers Databricks.  In fact, Databricks was started in 2013 by the creators of Spark (they also created Delta Lake and MLflow).  Databricks houses a version of Spark that is as close to latest release as possible and has features only available in Databricks.
+
+## Spark SQL Tables
+
+Every Spark SQL table consists of 2 components:
+
+- The metadata information that stores the schema
+- The data itself
+
+There are two types of Spark SQL Tables:
+
+- Managed
+- Unmanaged
+
+### Managed Table
+
+A managed table is a Spark SQL table for which Spark manages both the data and the metadata.
+
+The metadata is stored within the DBFS.  
+
+The data can be stored in the DBFS or external Hadoop compliant storage platform.
+
+Since Spark SQL manages the tables, doing a `DROP TABLE example_data` **deletes both the metadata and data**.
+
+## Useful Commands
+
+### Get Databricks API Permission Ids
 
     $> az ad sp show --id 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d >azure_dbx_permission_list.json
 
-## Get DBx Service Principal Token of behalf of User
+## Useful Links
+
+### Get DBx Service Principal Token of behalf of User
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/aad/app-aad-token>
 
-## Azure Data Bricks Pricing
+### Azure Data Bricks Pricing
 
 - <https://databricks.com/product/azure-pricing>
 
-## Databricks CLI
+### Databricks CLI
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/>
 
-## Setup Key Vault Secret Scope
+### Setup Key Vault Secret Scope
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/secrets>
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secret-scopes#create-an-azure-key-vault-backed-secret-scope-using-the-databricks-cli>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/#install-the-cli>
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
 
-## Set Secret
+### Set Secret
 
 - <https://docs.microsoft.com/en-us/azure/databricks/security/secrets/secrets>
 
-## Access Azure Data Lake Gen 2 from Azure Databricks
+### Access Azure Data Lake Gen 2 from Azure Databricks
 
 - <https://docs.databricks.com/data/data-sources/azure/adls-gen2/azure-datalake-gen2-get-started.html>
 
-## Convert Binary to String with DataFrame and Python
+### Convert Binary to String with DataFrame and Python
 
 - <https://stackoverflow.com/questions/57186799/how-to-extract-columns-from-binarytype-using-pyspark-databricks>
 
-## Avro Guide
+### Avro Guide
 
 - <https://spark.apache.org/docs/latest/sql-data-sources-avro.html#supported-types-for-spark-sql---avro-conversion>
 - <https://docs.microsoft.com/en-us/azure/databricks/data/data-sources/read-avro>
 - <https://docs.databricks.com/data/data-sources/read-avro.html>
 
-## Pandas and Pythons
+### Pandas and Pythons
 
 - <https://www.geeksforgeeks.org/python-pandas-dataframe/>
 - <https://mkaz.blog/code/python-string-format-cookbook/>
@@ -55,42 +89,42 @@ This repo contains examples of how to configure and deploy the Azure Databricks 
 - <https://dev.to/sridharanprasanna/using-wildcards-for-folder-path-with-spark-dataframe-load-4jo7>
 - <https://stackoverflow.com/questions/32233575/read-all-files-in-a-nested-folder-in-spark>
 
-## Sort and Filter a Data Frame
+### Sort and Filter a Data Frame
 
 - <https://sparkbyexamples.com/spark/spark-how-to-sort-dataframe-column-explained/>
 - <https://sparkbyexamples.com/spark/spark-filter-rows-with-null-values/>
 
-## PySpark Data Types
+### PySpark Data Types
 
 - <https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.sql.types.IntegerType.html>
 
-## Mount Databricks to ADLS Gen 2
+### Mount Databricks to ADLS Gen 2
 
 - <https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-use-databricks-spark>
 
-## VS Code Tooling
+### VS Code Tooling
 
 - <https://code.visualstudio.com/docs/datascience/jupyter-notebooks>
 
-## Terraform and Azure Databricks
+### Terraform and Azure Databricks
 
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/workspace-management>
 - <https://www.terraform.io/cli/commands/output>
 
-## Quartz Cron Job
+### Quartz Cron Job
 
 - <https://www.freeformatter.com/cron-expression-generator-quartz.html>
 
-## GitHub Actions Set Environment Variable in Step
+### GitHub Actions Set Environment Variable in Step
 
 - <https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files>
 
-## Deltalake
+### Deltalake
 
 - <https://docs.microsoft.com/en-us/azure/databricks/delta/delta-intro>
 
-## References
+### References
 
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace>
 - <https://docs.microsoft.com/en-us/azure/databricks/dev-tools/terraform/azure-workspace>
